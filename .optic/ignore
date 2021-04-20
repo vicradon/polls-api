@@ -14,3 +14,6 @@ GET (.*).jpg
 GET (.*).jpeg
 GET (.*).svg
 GET (.*).gif
+POST /api/a
+GET /api/a
+PATCH /api/a

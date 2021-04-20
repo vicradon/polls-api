@@ -7,10 +7,13 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "prepare": "husky install",
+        "api-status": "npx api status --pre-commit"
     },
     "devDependencies": {
         "axios": "^0.21",
+        "husky": "^6.0.0",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14"
