@@ -1,8 +1,0 @@
-name: "Polls API"
-tasks:
-  start:
-    command: php artisan serve --port=$PORT
-    inboundUrl: http://localhost:8000
-  tests:
-    command: php artisan test
-    useTask: start
