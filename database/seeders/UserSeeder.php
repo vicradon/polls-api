@@ -22,11 +22,11 @@ class UserSeeder extends Seeder
         User::factory()->isAdmin()->create();
 
         User::factory()->count(3)->state(
-            new Sequence([
-                'email' => 'user1@polls-app.com',
-                'email' => 'user2@polls-app.com',
-                'email' => 'user3@polls-app.com'
-            ])
+            new Sequence(
+                ['email' => 'user1@polls-app.com'],
+                ['email' => 'user2@polls-app.com'],
+                ['email' => 'user3@polls-app.com']
+            )
         )->has(
             Poll::factory()->count(5)->has(
                 Question::factory()->count(10)->has(
