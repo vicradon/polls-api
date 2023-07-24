@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: vicradon
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: pollsapp
+    container_name: pollsapp-container
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - pollsapp-network
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: pollsapp-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+    networks:
+      - pollsapp-network
+
+networks:
+  pollsapp-network:
+    driver: bridge
