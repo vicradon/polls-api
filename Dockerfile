@@ -1,38 +1,40 @@
+# Use an official PHP runtime as the base image
 FROM php:7.4-fpm
-
-# Arguments defined in docker-compose.yml
-ARG user
-ARG uid
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
     zip \
-    unzip
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    unzip \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql zip
 
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-USER $user
+# Copy Laravel files to the container
+COPY . /var/www/html
 
+# Install project dependencies
+RUN composer install --optimize-autoloader --no-dev
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+RUN cp .env.example .env
+RUN php artisan key:generate
+RUN echo DB_DATABASE=/var/www/html/database/database.sqlite >> .env
+
+# Expose port 8000 for PHP-FPM
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve"]
